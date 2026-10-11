@@ -1,0 +1,11 @@
+# Extras for the data-health console only. `pip install -r requirements.txt` is
+# enough to run the monitor, the CLI and every test.
+#
+# The console is deliberately not on the critical path: if Streamlit cannot start at
+# 02:00 the nightly job still judges the extract and still pages a critical finding,
+# because that path depends on nothing in this file.
+#
+# Verified on this machine: Python 3.14.6 / streamlit 1.65.0 / pandas 3.0.3 (2026-10-11).
+# CI runs Python 3.12 with the same ranges.
+streamlit>=1.57,<2
+pandas>=2.2,<4

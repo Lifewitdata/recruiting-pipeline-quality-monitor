@@ -1,0 +1,9 @@
+[tool.pytest.ini_options]
+# Tests import `monitor` and `etl` from the repo root, the same way the CLI does.
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    # re-runs the whole injection harness; deselect with `-m "not incident"`
+    "incident: injects a fault into the fixture and re-runs the full registry",
+]

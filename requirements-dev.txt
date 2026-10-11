@@ -1,0 +1,2 @@
+# Test-only dependencies. The monitor and its alert adapters need nothing from here.
+pytest>=9.1

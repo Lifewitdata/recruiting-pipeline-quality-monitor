@@ -1,0 +1,10 @@
+# Runtime dependencies for the monitor itself.
+#
+# One package. Everything else - the HTTP fetcher, the Slack adapter, the SMTP
+# adapter, the mock sink the tests run against - is stdlib, because an alerting path
+# is the last thing you want broken by a dependency that failed to install the night
+# it mattered.
+#
+# Verified on this machine: Python 3.14.6 / duckdb 1.5.6 (2026-10-11).
+# CI runs Python 3.12 with the same duckdb range.
+duckdb>=1.5,<2

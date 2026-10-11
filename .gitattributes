@@ -1,0 +1,33 @@
+# Line endings, decided by the repo rather than by each clone's core.autocrlf.
+#
+# This repo pins sha256 digests. `etl/fetch.py` verifies the dataset card against
+# f49d9e28..., and the contract checks read their expectations out of that same
+# file. Git's default text handling rewrites CRLF to LF in the blob, which changes
+# the bytes and makes a pinned checksum fail on a fresh Linux checkout - so the
+# card is marked -text and stored exactly as published.
+docs/upstream/dataset_card.md  -text
+
+# The source CSVs and the generated fixture are never committed (see .gitignore),
+# but if a reviewer points the fetcher at a local copy the same rule applies:
+# checksums describe bytes, and bytes do not have line endings to normalise.
+data/**                -text
+tests/fixtures/**      -text
+
+# Everything else normalises to LF everywhere, so a Windows working copy and a CI
+# runner see identical files and `git diff` stays quiet about whitespace.
+*.py     text eol=lf
+*.sql    text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.toml   text eol=lf
+*.md     text eol=lf
+*.json   text eol=lf
+*.txt    text eol=lf
+*.cfg    text eol=lf
+.gitignore   text eol=lf
+.gitattributes text eol=lf
+
+# Never let a diff renderer try to inline these.
+*.duckdb binary
+*.png    binary
+*.pdf    binary
