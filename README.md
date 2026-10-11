@@ -243,10 +243,13 @@ where they originate:
 appearing · a documented column silently dropped · a code column passing through a
 numeric dtype (`06` → `6.0`) · a published missing-rate drifting while the card still
 says the old number · orphan foreign keys from a partial dimension load · a re-appended
-delta colliding on the grain · a jitter that breaks stage ordering · an accepted
-placement with no offer · rows dated before the collection window · a regional export
-writing `DD/MM/YYYY` that casts to null · a new value in `last_stage_reached` · a whole
-month missing behind one late surviving row.
+delta colliding on the grain · 15 rows with `2nd_interview_date` moved 3 days *before*
+`1st_interview_date`, breaking the monotonic-sort the publisher's jitter guarantees ·
+an accepted placement with no offer · 3 whole trajectories shifted back 1,800 days,
+landing before the collection window opened · 8 `shortlist_date` cells rewritten
+`2024-01-13` → `13/01/2024` so `try_cast` turns them to NULL and the funnel quietly
+loses a stage · a new value in `last_stage_reached` · a whole month missing behind one
+late surviving row.
 
 *Warehouse model (1):* an incremental model change that deletes one stage from the
 unpivoted event log while the wide table stays correct — the failure only the
@@ -395,9 +398,12 @@ The publisher's own citation, copied verbatim from the dataset card:
 `etl/fetch.py` downloads the three CSVs from **Zenodo record
 [21390581](https://zenodo.org/records/21390581)**, which is the record that served
 the exact bytes whose sha256s are pinned in that file. The card's own Resources
-section links record 20020466; the fetcher's record is the one verified against the
-pinned hashes, and `python etl/fetch.py --offline` re-checks all four files (three
-CSVs plus the card) without touching the network.
+section links record [20020466](https://zenodo.org/records/20020466). Both resolve,
+both are titled "JTH - Job Tracking History", and neither link is broken: they are
+two **versions** of the same deposit — 20020466 published 2026-05-04, 21390581
+published 2026-07-16 — and the card was written against the earlier one. The fetcher
+points at the version whose bytes it can verify. `python etl/fetch.py --offline`
+re-checks all four files (three CSVs plus the card) without touching the network.
 
 **CC BY-NC 4.0** — non-commercial research use; the card states that commercial use
 and de-anonymisation are "strictly forbidden". The CSVs hold pseudonymised records of
