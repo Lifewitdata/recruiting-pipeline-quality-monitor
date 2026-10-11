@@ -98,6 +98,14 @@ jobs:
           PY
           cat .gate/score.md >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Console pages over the report the harness just wrote
+        shell: bash
+        # The Detection page reads reports/incident_report.json, which does not exist
+        # when the pytest step above runs. Its missing-report branch is covered there;
+        # this re-runs the console tests now that the real report is on disk, so CI
+        # exercises the populated branch too rather than only a developer's machine.
+        run: python -m pytest tests/test_dashboard.py -m "not incident" -rA
+
       - name: Upload what the monitor measured
         if: always()
         uses: actions/upload-artifact@v4

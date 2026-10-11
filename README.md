@@ -308,8 +308,16 @@ cmp .gate/a/history.csv .gate/b/history.csv
 
 `.github/workflows/ci.yml` is fully offline: registry list → `pytest -m "not
 incident"` → two syntheses compared byte-for-byte → the incident harness, whose
-nonzero exit *is* the assertion → a detection-score table written to the run
+nonzero exit *is* the assertion → the console tests again, now that the harness has
+written the report the Detection page reads → a detection-score table in the run
 summary. Artifacts carry `dq.*` only.
+
+That gate has already earned its place. It caught a dependency my local machine had
+supplied transitively: `duckdb-python` needs `pytz` to materialise a `timestamptz`
+column into a Python datetime, so every read of `dq.runs.started_at` or
+`dq.alerts.first_seen` needs it. Seven tests passed locally and failed in CI on the
+same commit. `requirements.txt` now names `pytz` and says why in its own comment,
+rather than letting the project depend on whichever package happened to pull it in.
 
 `.github/workflows/nightly-monitor.yml` is the scheduled monitor: 06:00 UTC,
 `workflow_dispatch` with an optional refresh, a cached `data/` directory keyed on

@@ -1,10 +1,23 @@
 # Runtime dependencies for the monitor itself.
 #
-# One package. Everything else - the HTTP fetcher, the Slack adapter, the SMTP
-# adapter, the mock sink the tests run against - is stdlib, because an alerting path
-# is the last thing you want broken by a dependency that failed to install the night
-# it mattered.
+# Two packages, and the second one is here under protest - documented rather than
+# hidden. Everything else (the HTTP fetcher, the Slack adapter, the SMTP adapter,
+# the mock sink the tests run against) is stdlib, because an alerting path is the
+# last thing you want broken by a dependency that failed to install the night it
+# mattered.
 #
-# Verified on this machine: Python 3.14.6 / duckdb 1.5.6 (2026-10-11).
-# CI runs Python 3.12 with the same duckdb range.
+# pytz is not used anywhere in this codebase. It is required by duckdb-python to
+# materialise a `timestamptz` column into a Python datetime: the schema stores run
+# and alert timings as `timestamptz` (correct for a router that re-pages after 12
+# wall-clock hours, which is a statement about real time, not about elapsed CPU
+# work), and reading `dq.runs.started_at` or `dq.alerts.first_seen` without pytz
+# installed fails with:
+#
+#   Invalid Input Error: Required module 'pytz' failed to import
+#
+# That error only appears on a machine where nothing else pulled pytz in
+# transitively, so it is declared here explicitly instead of being inherited from
+# pandas or streamlit. CI installs exactly this file and nothing more, which is
+# what caught it.
 duckdb>=1.5,<2
+pytz>=2024.1
